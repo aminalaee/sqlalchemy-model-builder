@@ -38,6 +38,22 @@ class TestDateBuilders(unittest.TestCase):
         self.assertGreaterEqual(random_datetime.year, 2000)
         self.assertLessEqual(random_datetime.year, 2050)
 
+    def test_next_int_valid_type(self):
+        random_int = RandomBuilder.next_int()
+        self.assertIsInstance(random_int, int)
+
+    def test_next_int_valid_range(self):
+        random_int = RandomBuilder.next_int()
+        self.assertLessEqual(random_int, 2147483647)
+
+    def test_next_str_valid_type(self):
+        random_str = RandomBuilder.next_str()
+        self.assertIsInstance(random_str, str)
+
+    def test_next_str_valid_length(self):
+        random_str = RandomBuilder.next_str(length=64)
+        self.assertLessEqual(len(random_str), 64)
+
     def test_next_time_valid_type(self):
         random_time = RandomBuilder.next_time()
         self.assertIsInstance(random_time, time)

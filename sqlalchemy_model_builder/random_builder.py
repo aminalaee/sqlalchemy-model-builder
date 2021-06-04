@@ -1,4 +1,5 @@
 import random
+import string
 import uuid
 from datetime import date, datetime, time, timedelta, timezone
 
@@ -25,6 +26,14 @@ class RandomBuilder:
     @classmethod
     def next_datetime_utc(cls) -> datetime:
         return cls.next_datetime().astimezone(timezone.utc)
+
+    @classmethod
+    def next_int(cls, minimum=0, maximum=2147483647) -> int:
+        return random.randint(minimum, maximum)
+
+    @classmethod
+    def next_str(cls, length=16) -> str:
+        return ''.join(random.choice(string.ascii_letters) for _ in range(length))
 
     @classmethod
     def next_time(cls) -> time:

@@ -1,0 +1,2 @@
+class ModelBuilderException(Exception):
+    pass
