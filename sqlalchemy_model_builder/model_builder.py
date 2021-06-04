@@ -69,17 +69,18 @@ class ModelBuilder:
         return types
 
     def __get_random_field_values(self) -> Dict[str, Any]:
-        values = {}
-        for field in self.field_types:
-            if isinstance(field, bool):
+        values: Dict[str, Any] = {}
+
+        for field, field_type in self.field_types.items():
+            if field_type == bool:
                 values[field] = RandomBuilder.next_bool()
-            if isinstance(field, date):
+            if field_type == date:
                 values[field] = RandomBuilder.next_date()
-            if isinstance(field, datetime):
+            if field_type == datetime:
                 values[field] = RandomBuilder.next_datetime()
-            if isinstance(field, int):
+            if field_type == int:
                 values[field] = RandomBuilder.next_int()
-            if isinstance(field, str):
+            if field_type == str:
                 values[field] = RandomBuilder.next_str()
 
         return values

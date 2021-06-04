@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import (Column, DateTime, ForeignKey, Integer, String,
-                        create_engine)
+from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
+                        String, create_engine)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, relationship, sessionmaker
 
@@ -20,9 +20,11 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    is_active = Column(Boolean)
     fullname = Column(String)
     nickname = Column(String)
     created = Column(DateTime, default=datetime.utcnow)
+    date_of_birth = Column(Date)
 
     addresses = relationship(
         "Address", back_populates="user", cascade="all, delete, delete-orphan"
@@ -46,4 +48,4 @@ LocalSession = sessionmaker(bind=engine)
 db: Session = LocalSession()
 
 ModelBuilder(User).build()
-# ModelBuilder(User).save()
+ModelBuilder(User, engine=engine).save()
