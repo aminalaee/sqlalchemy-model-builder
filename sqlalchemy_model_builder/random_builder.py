@@ -28,7 +28,15 @@ class RandomBuilder:
         return cls.next_datetime().astimezone(timezone.utc)
 
     @classmethod
+    def next_float(cls, minimum=0, maximum=2147483647, precision=5) -> float:
+        return round(random.uniform(minimum, maximum), precision)
+
+    @classmethod
     def next_int(cls, minimum=0, maximum=2147483647) -> int:
+        return random.randint(minimum, maximum)
+
+    @classmethod
+    def next_int64(cls, minimum=0, maximum=9223372036854775807) -> int:
         return random.randint(minimum, maximum)
 
     @classmethod

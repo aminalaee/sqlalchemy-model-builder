@@ -10,6 +10,14 @@ class TestDateBuilders(unittest.TestCase):
         random_bool = RandomBuilder.next_bool()
         self.assertIsInstance(random_bool, bool)
 
+    def test_next_float_valid_type(self):
+        random_float = RandomBuilder.next_float()
+        self.assertIsInstance(random_float, float)
+
+    def test_next_float_valid_range(self):
+        random_float = RandomBuilder.next_float(maximum=1000)
+        self.assertLessEqual(random_float, 1000)
+
     def test_next_date_valid_type(self):
         random_date = RandomBuilder.next_date()
         self.assertIsInstance(random_date, date)
@@ -45,6 +53,14 @@ class TestDateBuilders(unittest.TestCase):
     def test_next_int_valid_range(self):
         random_int = RandomBuilder.next_int()
         self.assertLessEqual(random_int, 2147483647)
+
+    def test_next_int64_valid_type(self):
+        random_int = RandomBuilder.next_int64()
+        self.assertIsInstance(random_int, int)
+
+    def test_next_int64_valid_range(self):
+        random_int = RandomBuilder.next_int64()
+        self.assertLessEqual(random_int, 9223372036854775807)
 
     def test_next_str_valid_type(self):
         random_str = RandomBuilder.next_str()
