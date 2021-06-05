@@ -85,19 +85,29 @@ class ModelBuilder:
 
         return values
 
-    def __map_field_to_random_builder_method(self, field_type: Type) -> Callable:
+    def __map_field_to_random_builder_method(self, field_type: Type) -> Callable[[], Any]:
         """Mapping between field type and RandomBuilder methods
 
         :returns: a RandomBuilder method for the provided type
-        :rtype: func
+        :rtype: function
         """
-        return {
-            bool: RandomBuilder.next_bool,
-            date: RandomBuilder.next_date,
-            datetime: RandomBuilder.next_datetime,
-            float: RandomBuilder.next_float,
-            int: RandomBuilder.next_int,
-            str: RandomBuilder.next_str,
-            time: RandomBuilder.next_time,
-            timedelta: RandomBuilder.next_timedelta,
-        }.get(field_type, RandomBuilder.next_str)
+        func: Callable[[], Any] = RandomBuilder.next_str
+
+        if field_type == bool:
+            func = RandomBuilder.next_bool
+        elif field_type == date:
+            func = RandomBuilder.next_date
+        elif field_type == datetime:
+            func = RandomBuilder.next_datetime
+        elif field_type == float:
+            func = RandomBuilder.next_float
+        elif field_type == int:
+            func = RandomBuilder.next_int
+        elif field_type == str:
+            func = RandomBuilder.next_str
+        elif field_type == time:
+            func = RandomBuilder.next_time
+        elif field_type == timedelta:
+            func = RandomBuilder.next_timedelta
+
+        return func
