@@ -11,14 +11,14 @@ class RandomBuilder:
 
     @classmethod
     def next_date(cls) -> date:
-        return date(year=random.randint(2000, 2050), month=random.randint(1, 12), day=random.randint(1, 29))
+        return date(year=random.randint(2000, 2050), month=random.randint(1, 12), day=random.randint(1, 28))
 
     @classmethod
     def next_datetime(cls) -> datetime:
         return datetime(
             year=random.randint(2000, 2050),
             month=random.randint(1, 12),
-            day=random.randint(1, 29),
+            day=random.randint(1, 28),
             hour=random.randint(0, 23),
             minute=random.randint(0, 59),
             second=random.randint(0, 59))
