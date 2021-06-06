@@ -1,3 +1,6 @@
-__version__ = '0.0.0'
+__version__ = "0.0.1"
 
-__all__ = [""]
+from sqlalchemy_model_builder.exceptions import ModelBuilderException
+from sqlalchemy_model_builder.model_builder import ModelBuilder
+
+__all__ = ["ModelBuilder", "ModelBuilderException"]
