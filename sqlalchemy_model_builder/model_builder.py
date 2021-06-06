@@ -12,7 +12,6 @@ from sqlalchemy_model_builder.random_builder import RandomBuilder
 class ModelBuilder:
     def __init__(self, db_model: Type):
         self.db_model: Type = db_model
-        self.field_types: Dict[str, Type] = {}
         self.field_values: Dict[str, Any] = {}
 
     def build(self) -> Any:
@@ -22,11 +21,9 @@ class ModelBuilder:
         :rtype: Any
         """
         try:
-            self.field_types = self.__get_model_fields()
+            self.field_values = self.__get_model_fields()
         except NoInspectionAvailable as sqlalchemy_exception:
             raise ModelBuilderException(f"Class {self.db_model} is not a SQLAlchemy model") from sqlalchemy_exception
-
-        self.field_values = self.__get_model_field_values()
 
         instance = self.db_model(**self.field_values)
 
@@ -48,12 +45,12 @@ class ModelBuilder:
         return instance
 
     def __get_model_fields(self) -> Dict[str, Type]:
-        """Extract model field types from SQLAlchemy model
+        """Get model field and values from SQLAlchemy model
 
-        :returns: a dictionary of model field types; key is name of field and value is type of field
+        :returns: a dictionary of model field values; key is name of field and value is random value
         :rtype: dict
         """
-        types = {}
+        values = {}
         mapper = inspect(self.db_model)
 
         for attr in mapper.attrs:
@@ -68,24 +65,11 @@ class ModelBuilder:
                 python_type = column.type.python_type
             assert python_type, f"Could not infer python_type for {column}"
 
-            types[name] = python_type
-
-        return types
-
-    def __get_model_field_values(self) -> Dict[str, Any]:
-        """Generate model field values for SQLAlchemy model
-
-        :returns: a dictionary of model field values; key is name of field and value is random value
-        :rtype: dict
-        """
-        values: Dict[str, Any] = {}
-
-        for field, field_type in self.field_types.items():
-            values[field] = self.__map_field_to_random_builder_method(field_type)()
+            values[name] = self.__map_field_to_random_builder_method(python_type)()
 
         return values
 
-    def __map_field_to_random_builder_method(self, field_type: Type) -> Callable[[], Any]:
+    def __map_field_to_random_builder_method(self, field_type: type) -> Callable[[], Any]:
         """Mapping between field type and RandomBuilder methods
 
         :returns: a RandomBuilder method for the provided type

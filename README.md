@@ -7,20 +7,70 @@
 - Build relationships (Todo)
 - Build with minimal(required) fields only (Todo)
 
+## How to use
+Build SQLAlchemy model:
+```
+from sqlalchemy.ext.declarative import declarative_base
+
+from sqlalchemy_model_builder import ModelBuilder
+
+Base = declarative_base()
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    bio = Column(Text)
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+
+
+random_user = ModelBuilder(User).build()  # Note: This will not insert the User, you have to do it manually
+```
+
+Save SQLAlchemy model:
+```
+from sqlalchemy.ext.declarative import declarative_base
+
+from sqlalchemy_model_builder import ModelBuilder
+
+Base = declarative_base()
+
+engine = create_engine("sqlite://", echo=True)
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    bio = Column(Text)
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+
+
+Base.metadata.create_all(engine)
+
+LocalSession = sessionmaker(bind=engine)
+
+db = LocalSession()
+
+
+random_user = ModelBuilder(User).save(db=db)  # Note: Build and Save model using provided session
+```
+
 ## Supported Data Types
 - BigInteger
 - Boolean
 - Date
 - DateTime
-- Enum
+- Enum  (Todo)
 - Float
 - Integer
 - Interval
-- LargeBinary
-- MatchType
-- Numeric
-- PickleType
-- SchemaType
+- LargeBinary (Todo)
+- MatchType (Todo)
+- Numeric (Todo)
+- PickleType (Todo)
+- SchemaType (Todo)
 - SmallInteger
 - String
 - Text
