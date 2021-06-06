@@ -5,12 +5,13 @@
 ## Features
 - Build and Save SQLALchemy models with random data
 - Build relationships (Todo)
-- Build with minimal(required) fields only (Todo)
+- Build with minimal (required) fields only (Todo)
 
 ## How to use
 Build SQLAlchemy model:
 ```
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql.sqltypes import Integer, String
 
 from sqlalchemy_model_builder import ModelBuilder
 
@@ -20,17 +21,17 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    bio = Column(Text)
     id = Column(Integer, primary_key=True)
     name = Column(String)
 
 
-random_user = ModelBuilder(User).build()  # Note: This will not insert the User, you have to do it manually
+random_user = ModelBuilder(User).build()  # Note: This will not insert the User
 ```
 
 Save SQLAlchemy model:
 ```
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql.sqltypes import Integer, String
 
 from sqlalchemy_model_builder import ModelBuilder
 
@@ -54,7 +55,7 @@ LocalSession = sessionmaker(bind=engine)
 db = LocalSession()
 
 
-random_user = ModelBuilder(User).save(db=db)  # Note: Build and Save model using provided session
+random_user = ModelBuilder(User).save(db=db)  # Note: Builds and Saves model using provided session
 ```
 
 ## Supported Data Types
