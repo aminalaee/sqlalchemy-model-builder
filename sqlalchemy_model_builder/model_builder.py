@@ -10,9 +10,10 @@ from sqlalchemy_model_builder.random_builder import RandomBuilder
 
 
 class ModelBuilder:
-    def __init__(self, db_model: Type):
+    def __init__(self, db_model: Type, minimal: bool = False):
         self.db_model: Type = db_model
         self.field_values: Dict[str, Any] = {}
+        self.minimal: bool = minimal
 
     def build(self) -> Any:
         """Build SQLAlchemy model with random data and return it without persisting into database
@@ -64,6 +65,9 @@ class ModelBuilder:
             elif hasattr(column.type, "python_type"):
                 python_type = column.type.python_type
             assert python_type, f"Could not infer python_type for {column}"
+
+            if self.minimal and column.nullable:
+                continue
 
             values[name] = self.__map_field_to_random_builder_method(python_type)()
 

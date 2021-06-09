@@ -1,4 +1,4 @@
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 from sqlalchemy_model_builder.exceptions import ModelBuilderException
 from sqlalchemy_model_builder.model_builder import ModelBuilder

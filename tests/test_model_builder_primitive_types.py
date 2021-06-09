@@ -22,7 +22,7 @@ class User(Base):
     bio_unicode = Column(UnicodeText)
     id = Column(Integer, primary_key=True)
     is_active = Column(Boolean)
-    name = Column(String)
+    name = Column(String, nullable=False)
     name_unicode = Column(Unicode)
     joined_at = Column(DateTime)
     date_of_birth = Column(Date)
@@ -45,6 +45,9 @@ class TestModelBuilderPrimitiveTypes(unittest.TestCase):
 
     def test_build_model_with_primitive_types(self):
         ModelBuilder(User).build()
+
+    def test_build_model_with_primitive_types_with_minimal(self):
+        ModelBuilder(User, minimal=True).build()
 
     def test_save_model_with_primitive_types(self):
         ModelBuilder(User).save(db=db)
