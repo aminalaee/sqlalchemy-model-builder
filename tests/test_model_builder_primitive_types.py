@@ -1,11 +1,10 @@
 import unittest
 
-from sqlalchemy import Column, create_engine
+from sqlalchemy import (BigInteger, Boolean, Column, Date, DateTime, Float,
+                        Integer, Interval, SmallInteger, String, Text, Time,
+                        Unicode, UnicodeText, create_engine)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.sql.sqltypes import (BigInteger, Boolean, Date, DateTime,
-                                     Float, Integer, Interval, SmallInteger,
-                                     String, Text, Time, Unicode, UnicodeText)
 
 from sqlalchemy_model_builder import ModelBuilder, ModelBuilderException
 

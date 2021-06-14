@@ -1,18 +1,20 @@
 from datetime import date, datetime, time, timedelta
-from typing import Any, Callable, Dict, Optional, Type
+from typing import Any, Callable, Optional, Type
 
+from sqlalchemy import inspect
 from sqlalchemy.exc import NoInspectionAvailable
-from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.session import Session
 
 from sqlalchemy_model_builder.exceptions import ModelBuilderException
+from sqlalchemy_model_builder.models import (ColumnValuePair,
+                                             ColumnValuePairList)
 from sqlalchemy_model_builder.random_builder import RandomBuilder
 
 
 class ModelBuilder:
     def __init__(self, db_model: Type, minimal: bool = False):
+        self.db: Optional[Session] = None
         self.db_model: Type = db_model
-        self.field_values: Dict[str, Any] = {}
         self.minimal: bool = minimal
 
     def build(self) -> Any:
@@ -22,11 +24,11 @@ class ModelBuilder:
         :rtype: Any
         """
         try:
-            self.field_values = self.__get_model_fields()
+            values = self.__get_model_fields(self.db_model)
         except NoInspectionAvailable as sqlalchemy_exception:
             raise ModelBuilderException(f"Class {self.db_model} is not a SQLAlchemy model") from sqlalchemy_exception
 
-        instance = self.db_model(**self.field_values)
+        instance = self.db_model(**values.to_dict())
 
         return instance
 
@@ -38,25 +40,58 @@ class ModelBuilder:
         :returns: a SQLAlchemy database model with generated random data
         :rtype: Any
         """
+        self.db = db
+
         instance = self.build()
 
-        db.add(instance)
-        db.commit()
+        self.__save(instance)
 
         return instance
 
-    def __get_model_fields(self) -> Dict[str, Type]:
+    def __build_model_relationships(self, mapper) -> ColumnValuePairList:
+        """Build model relationships
+
+        :param mapper: Mapper to load relationship from
+        :type mapper: SQLAlchemy ORM Mapper
+        :returns: a List of ColumnValuePair to map column with instance
+        :rtype: ColumnValuePairList
+        """
+        related_models = []
+
+        for relationship in mapper.relationships:
+            foreign_keys = any(c.foreign_keys for c in relationship.local_columns)
+            if not foreign_keys:
+                continue
+
+            values = self.__get_model_fields(relationship.mapper)
+            instance = relationship.mapper.class_(**values.to_dict())
+
+            if self.db:
+                self.__save(instance)
+        
+            foreign_key_column = next(iter(relationship.local_columns))
+
+            column_value = ColumnValuePair(foreign_key_column.key, instance)
+            related_models.append(column_value)
+        
+        return ColumnValuePairList(related_models)
+
+    def __get_model_fields(self, db_model: Type) -> ColumnValuePairList:
         """Get model field and values from SQLAlchemy model
 
         :returns: a dictionary of model field values; key is name of field and value is random value
-        :rtype: dict
+        :rtype: ColumnValuePairList
         """
-        values = {}
-        mapper = inspect(self.db_model)
+        column_values = []
+        mapper = inspect(db_model)
 
-        for attr in mapper.attrs:
-            name = attr.key
-            column = attr.columns[0]
+        relationships = self.__build_model_relationships(mapper)
+        for relationship in relationships.pairs:
+            primary_key = inspect(relationship.value).mapper.primary_key[0]
+            column_value = ColumnValuePair(relationship.column, getattr(relationship.value, primary_key.key))
+            column_values.append(column_value)
+
+        for column in mapper.columns:
             python_type: Optional[type] = None
 
             if hasattr(column.type, "impl"):
@@ -69,9 +104,14 @@ class ModelBuilder:
             if self.minimal and column.nullable:
                 continue
 
-            values[name] = self.__map_field_to_random_builder_method(python_type)()
+            if column.foreign_keys:
+                continue
 
-        return values
+            random_value = self.__map_field_to_random_builder_method(python_type)()
+            column_value = ColumnValuePair(column.key, random_value)
+            column_values.append(column_value)
+
+        return ColumnValuePairList(column_values)
 
     def __map_field_to_random_builder_method(self, field_type: type) -> Callable[[], Any]:
         """Mapping between field type and RandomBuilder methods
@@ -99,3 +139,7 @@ class ModelBuilder:
             func = RandomBuilder.next_timedelta
 
         return func
+
+    def __save(self, instance: Any):
+        self.db.add(instance)
+        self.db.commit()
