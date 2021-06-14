@@ -68,12 +68,12 @@ class ModelBuilder:
 
             if self.db:
                 self.__save(instance)
-        
+
             foreign_key_column = next(iter(relationship.local_columns))
 
             column_value = ColumnValuePair(foreign_key_column.key, instance)
             related_models.append(column_value)
-        
+
         return ColumnValuePairList(related_models)
 
     def __get_model_fields(self, db_model: Type) -> ColumnValuePairList:
