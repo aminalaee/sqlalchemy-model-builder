@@ -1,5 +1,5 @@
 from datetime import date, datetime, time, timedelta
-from typing import Any, Callable, Dict, Optional, Type
+from typing import Any, Callable, Optional, Type
 
 from sqlalchemy import inspect
 from sqlalchemy.exc import NoInspectionAvailable
