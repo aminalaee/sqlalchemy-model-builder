@@ -141,5 +141,8 @@ class ModelBuilder:
         return func
 
     def __save(self, instance: Any):
+        if not self.db:
+            raise ModelBuilderException("No database session provided")
+
         self.db.add(instance)
         self.db.commit()
