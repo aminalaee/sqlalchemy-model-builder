@@ -29,6 +29,7 @@ class Address(Base):
 class User(Base):
     __tablename__ = "users"
 
+    addresses = relationship("Address", back_populates="user")
     bio = Column(Text)
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
@@ -38,7 +39,7 @@ random_user = ModelBuilder(User).build()  # This will not insert the User
 
 minimal_random_user = ModelBuilder(User, minimal=True).build()  # Builds User with `id` and `name`
 
-random_address = ModelBuilder(Address).build(user_id=user.id)  # Build with the specified `user_id`
+random_address = ModelBuilder(Address).build(user_id=user.id)  # Build with `user_id`
 ```
 
 Save SQLAlchemy model:
@@ -64,6 +65,7 @@ class Address(Base):
 class User(Base):
     __tablename__ = "users"
 
+    addresses = relationship("Address", back_populates="user")
     bio = Column(Text)
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
@@ -78,7 +80,7 @@ db = LocalSession()
 
 random_user = ModelBuilder(User).save(db=db)  # Builds and Saves model using provided session
 
-random_address = ModelBuilder(Address).save(db=db, user_id=user.id)  # Save with the specified `user_id`
+random_address = ModelBuilder(Address).save(db=db, user_id=user.id)  # Save with `user_id`
 ```
 
 ## Supported Data Types
