@@ -38,10 +38,27 @@ class TestModelBuilderPrimitiveTypes(unittest.TestCase):
         ModelBuilder(Address).build()
 
     def test_build_related_model_and_use_in_build(self):
-        pass
+        user = ModelBuilder(User).build()
+        address = ModelBuilder(Address).build(user_id=user.id)
+
+        self.assertEqual(address.user_id, user.id)
 
     def test_build_related_model_and_use_in_save(self):
-        pass
+        user = ModelBuilder(User).save(db=db)
+        address = ModelBuilder(Address).save(db=db, user_id=user.id)
+
+        queried_user = db.query(User).get(user.id)
+        queried_address = db.query(Address).get(address.id)
+
+        self.assertEqual(user, queried_user)
+        self.assertEqual(address, queried_address)
+        self.assertEqual(queried_address.user_id, address.user_id)
 
     def test_save_model_with_foreign_key(self):
-        ModelBuilder(Address).save(db=db)
+        address = ModelBuilder(Address).save(db=db)
+
+        queried_address = db.query(Address).get(address.id)
+        queried_user = db.query(User).get(address.user_id)
+
+        self.assertEqual(address, queried_address)
+        self.assertTrue(queried_user)

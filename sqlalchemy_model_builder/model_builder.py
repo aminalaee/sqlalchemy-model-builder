@@ -1,5 +1,5 @@
 from datetime import date, datetime, time, timedelta
-from typing import Any, Callable, Optional, Type
+from typing import Any, Callable, Dict, Optional, Type
 
 from sqlalchemy import inspect
 from sqlalchemy.exc import NoInspectionAvailable
@@ -12,12 +12,12 @@ from sqlalchemy_model_builder.random_builder import RandomBuilder
 
 
 class ModelBuilder:
-    def __init__(self, db_model: Type, minimal: bool = False):
+    def __init__(self, db_model: Type, minimal: bool = False, ):
         self.db: Optional[Session] = None
         self.db_model: Type = db_model
         self.minimal: bool = minimal
 
-    def build(self) -> Any:
+    def build(self, **attrs) -> Any:
         """Build SQLAlchemy model with random data and return it without persisting into database
 
         :returns: a SQLAlchemy database model with generated random data
@@ -28,11 +28,12 @@ class ModelBuilder:
         except NoInspectionAvailable as sqlalchemy_exception:
             raise ModelBuilderException(f"Class {self.db_model} is not a SQLAlchemy model") from sqlalchemy_exception
 
-        instance = self.db_model(**values.to_dict())
+        values_with_attrs = dict(values.to_dict(), **attrs)
+        instance = self.db_model(**values_with_attrs)
 
         return instance
 
-    def save(self, db: Session) -> Any:
+    def save(self, db: Session, **attrs) -> Any:
         """Build SQLAlchemy model with random data and persist it into database using provided db
 
         :param db: SQLAlchemy database session
@@ -42,7 +43,7 @@ class ModelBuilder:
         """
         self.db = db
 
-        instance = self.build()
+        instance = self.build(**attrs)
 
         self.__save(instance)
 
@@ -141,8 +142,7 @@ class ModelBuilder:
         return func
 
     def __save(self, instance: Any):
-        if not self.db:
-            raise ModelBuilderException("No database session provided")
+        assert self.db is not None
 
         self.db.add(instance)
         self.db.commit()

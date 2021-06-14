@@ -46,7 +46,12 @@ class TestModelBuilderPrimitiveTypes(unittest.TestCase):
         ModelBuilder(User).build()
 
     def test_build_model_with_primitive_types_with_minimal(self):
-        ModelBuilder(User, minimal=True).build()
+        user = ModelBuilder(User, minimal=True).build()
+
+        self.assertFalse(user.bio)
 
     def test_save_model_with_primitive_types(self):
-        ModelBuilder(User).save(db=db)
+        user = ModelBuilder(User).save(db=db)
+        queried_user = db.query(User).get(user.id)
+
+        self.assertEqual(user, queried_user)
