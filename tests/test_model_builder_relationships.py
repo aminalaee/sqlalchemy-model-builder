@@ -4,7 +4,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, relationship, sessionmaker
 
-from sqlalchemy_model_builder import ModelBuilder
+from sqlalchemy_model_builder import ModelBuilder, ModelBuilderException
 
 Base = declarative_base()
 
@@ -42,6 +42,10 @@ class TestModelBuilderPrimitiveTypes(unittest.TestCase):
         address = ModelBuilder(Address).build(user_id=user.id)
 
         self.assertEqual(address.user_id, user.id)
+
+    def test_build_model_with_invalid_attrs_raises_exception(self):
+        with self.assertRaises(ModelBuilderException):
+            ModelBuilder(User).build(invalid_field="test")
 
     def test_build_related_model_and_use_in_save(self):
         user = ModelBuilder(User).save(db=db)

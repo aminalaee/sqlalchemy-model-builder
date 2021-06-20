@@ -12,7 +12,7 @@ from sqlalchemy_model_builder.random_builder import RandomBuilder
 
 
 class ModelBuilder:
-    def __init__(self, db_model: Type, minimal: bool = False, ):
+    def __init__(self, db_model: Type, minimal: bool = False):
         self.db: Optional[Session] = None
         self.db_model: Type = db_model
         self.minimal: bool = minimal
@@ -24,12 +24,16 @@ class ModelBuilder:
         :rtype: Any
         """
         try:
-            values = self.__get_model_fields(self.db_model)
+            column_values = self.__get_model_fields(self.db_model)
         except NoInspectionAvailable as sqlalchemy_exception:
             raise ModelBuilderException(f"Class {self.db_model} is not a SQLAlchemy model") from sqlalchemy_exception
 
-        values_with_attrs = dict(values.to_dict(), **attrs)
-        instance = self.db_model(**values_with_attrs)
+        column_values_with_attrs = dict(column_values.to_dict(), **attrs)
+
+        try:
+            instance = self.db_model(**column_values_with_attrs)
+        except TypeError as sqlalchemy_exception:
+            raise ModelBuilderException(f"Invalid fields for model: {self.db_model}") from sqlalchemy_exception
 
         return instance
 
