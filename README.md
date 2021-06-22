@@ -4,7 +4,7 @@
 
 ## Features
 - Build and Save SQLALchemy models with random data
-- Build relationships (Todo)
+- Build relationships
 - Build minimal (with required) fields only
 
 ## How to use
