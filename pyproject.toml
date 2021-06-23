@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sqlalchemy-model-builder"
-version = "0.0.3"
+version = "0.0.5"
 description = "SQLAlchemy Model Builder"
 authors = ["Amin Alaee <mohammadamin.alaee@gmail.com>"]
 license = "MIT"
