@@ -11,7 +11,7 @@ class RandomBuilder:
 
     @classmethod
     def next_bytes(cls, length=8) -> bytes:
-        return random.randbytes(length)
+        return random.getrandbits(length * 8).to_bytes(length, 'little')
 
     @classmethod
     def next_date(cls) -> date:
