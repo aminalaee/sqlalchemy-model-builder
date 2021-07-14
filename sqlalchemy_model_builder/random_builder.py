@@ -1,5 +1,7 @@
+import enum
 import random
 import string
+import typing
 import uuid
 from datetime import date, datetime, time, timedelta, timezone
 
@@ -30,6 +32,10 @@ class RandomBuilder:
     @classmethod
     def next_datetime_utc(cls) -> datetime:
         return cls.next_datetime().astimezone(timezone.utc)
+
+    @classmethod
+    def next_enum(cls, e: typing.Type[enum.Enum]) -> typing.Any:
+        return random.choice([item.value for item in e])
 
     @classmethod
     def next_float(cls, minimum=0, maximum=2147483647, precision=5) -> float:
