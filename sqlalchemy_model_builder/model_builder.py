@@ -128,6 +128,8 @@ class ModelBuilder:
 
         if field_type == bool:
             func = RandomBuilder.next_bool
+        elif field_type == bytes:
+            func = RandomBuilder.next_bytes
         elif field_type == date:
             func = RandomBuilder.next_date
         elif field_type == datetime:
