@@ -10,6 +10,10 @@ class RandomBuilder:
         return random.choice([True, False])
 
     @classmethod
+    def next_bytes(cls, length=8) -> bytes:
+        return random.getrandbits(length * 8).to_bytes(length, 'little')
+
+    @classmethod
     def next_date(cls) -> date:
         return date(year=random.randint(2000, 2050), month=random.randint(1, 12), day=random.randint(1, 28))
 

@@ -1,8 +1,8 @@
 import unittest
 
 from sqlalchemy import (BigInteger, Boolean, Column, Date, DateTime, Float,
-                        Integer, Interval, SmallInteger, String, Text, Time,
-                        Unicode, UnicodeText, create_engine)
+                        Integer, Interval, LargeBinary, SmallInteger, String,
+                        Text, Time, Unicode, UnicodeText, create_engine)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -19,6 +19,7 @@ class User(Base):
     active_until = Column(Interval)
     bio = Column(Text)
     bio_unicode = Column(UnicodeText)
+    image = Column(LargeBinary)
     id = Column(Integer, primary_key=True)
     is_active = Column(Boolean)
     name = Column(String, nullable=False)

@@ -10,6 +10,10 @@ class TestDateBuilders(unittest.TestCase):
         random_bool = RandomBuilder.next_bool()
         self.assertIsInstance(random_bool, bool)
 
+    def test_next_bytes_valid_range(self):
+        random_bytes = RandomBuilder.next_bytes(length=100)
+        self.assertEqual(len(random_bytes), 100)
+
     def test_next_float_valid_type(self):
         random_float = RandomBuilder.next_float()
         self.assertIsInstance(random_float, float)
