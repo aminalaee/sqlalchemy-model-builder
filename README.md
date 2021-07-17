@@ -88,7 +88,7 @@ random_address = ModelBuilder(Address).save(db=db, user_id=user.id)  # Save with
 - Boolean
 - Date
 - DateTime
-- Enum  (Todo)
+- Enum
 - Float
 - Integer
 - Interval
