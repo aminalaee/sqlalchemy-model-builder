@@ -1,8 +1,9 @@
 import unittest
 
 from sqlalchemy import (BigInteger, Boolean, Column, Date, DateTime, Float,
-                        Integer, Interval, LargeBinary, SmallInteger, String,
-                        Text, Time, Unicode, UnicodeText, create_engine)
+                        Integer, Interval, LargeBinary, Numeric, SmallInteger,
+                        String, Text, Time, Unicode, UnicodeText,
+                        create_engine)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -19,17 +20,18 @@ class User(Base):
     active_until = Column(Interval)
     bio = Column(Text)
     bio_unicode = Column(UnicodeText)
-    image = Column(LargeBinary)
+    date_of_birth = Column(Date)
+    deposit = Column(Float)
     id = Column(Integer, primary_key=True)
+    image = Column(LargeBinary)
     is_active = Column(Boolean)
+    joined_at = Column(DateTime)
     name = Column(String, nullable=False)
     name_unicode = Column(Unicode)
-    joined_at = Column(DateTime)
-    date_of_birth = Column(Date)
-    time_of_birth = Column(Time)
-    deposit = Column(Float)
     points = Column(SmallInteger)
     profile_visits = Column(BigInteger)
+    rank = Column(Numeric(precision=8, asdecimal=False, decimal_return_scale=None))
+    time_of_birth = Column(Time)
 
 Base.metadata.create_all(engine)
 
