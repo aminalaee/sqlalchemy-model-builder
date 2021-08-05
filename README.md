@@ -94,7 +94,7 @@ random_address = ModelBuilder(Address).save(db=db, user_id=user.id)  # Save with
 - Interval
 - LargeBinary
 - MatchType (Todo)
-- Numeric (Todo)
+- Numeric
 - PickleType (Todo)
 - SchemaType (Todo)
 - SmallInteger
