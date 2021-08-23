@@ -9,7 +9,8 @@
 
 ## How to use
 Build SQLAlchemy model:
-```
+
+```python
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.sqltypes import Integer, String, Text
 
@@ -43,7 +44,8 @@ random_address = ModelBuilder(Address).build(user_id=user.id)  # Build with `use
 ```
 
 Save SQLAlchemy model:
-```
+
+```python
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.sqltypes import Integer, String
 
