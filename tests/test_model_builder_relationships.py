@@ -8,7 +8,7 @@ from sqlalchemy_model_builder import ModelBuilder, ModelBuilderException
 
 Base = declarative_base()
 
-engine = create_engine("sqlite://", echo=True)
+engine = create_engine("sqlite://")
 
 
 class Address(Base):
@@ -34,7 +34,7 @@ LocalSession = sessionmaker(bind=engine)
 db: Session = LocalSession()
 
 
-class TestModelBuilderPrimitiveTypes(unittest.TestCase):
+class TestModelBuilderRelationships(unittest.TestCase):
     def test_build_model_with_foreign_key(self):
         ModelBuilder(Address).build()
 

@@ -17,6 +17,7 @@ from sqlalchemy import (
     Time,
     Unicode,
     UnicodeText,
+    Uuid,
     create_engine,
 )
 from sqlalchemy.ext.declarative import declarative_base
@@ -26,7 +27,7 @@ from sqlalchemy_model_builder import ModelBuilder, ModelBuilderException
 
 Base = declarative_base()
 
-engine = create_engine("sqlite://", echo=True)
+engine = create_engine("sqlite://")
 
 
 class User(Base):
@@ -47,6 +48,7 @@ class User(Base):
     profile_visits = Column(BigInteger)
     rank = Column(Numeric(precision=8, asdecimal=False, decimal_return_scale=None))
     time_of_birth = Column(Time)
+    uuid = Column(Uuid)
 
 
 Base.metadata.create_all(engine)
@@ -56,21 +58,30 @@ LocalSession = sessionmaker(bind=engine)
 db: Session = LocalSession()
 
 
-class TestModelBuilderPrimitiveTypes(unittest.TestCase):
+class TestModelBuilderTypes(unittest.TestCase):
     def test_build_model_with_invalid_class_throws_exception(self):
         with self.assertRaises(ModelBuilderException):
             ModelBuilder(Base).build()
 
-    def test_build_model_with_primitive_types(self):
+    def test_build_model_types(self):
         ModelBuilder(User).build()
 
-    def test_build_model_with_primitive_types_with_minimal(self):
+    def test_build_model_minimal(self):
         user = ModelBuilder(User, minimal=True).build()
 
         self.assertFalse(user.bio)
 
-    def test_save_model_with_primitive_types(self):
+    def test_save_model_types(self):
         user = ModelBuilder(User).save(db=db)
         queried_user = db.query(User).get(user.id)
 
         self.assertEqual(user, queried_user)
+
+    def test_build_multiple_models_not_duplicate(self):
+        user_1 = ModelBuilder(User).save(db=db)
+        user_2 = ModelBuilder(User).save(db=db)
+
+        self.assertNotEqual(user_1.id, user_2.id)
+        self.assertNotEqual(user_1.bio, user_2.bio)
+        self.assertNotEqual(user_1.uuid, user_2.uuid)
+        self.assertNotEqual(user_1.date_of_birth, user_2.date_of_birth)
