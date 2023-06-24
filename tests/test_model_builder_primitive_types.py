@@ -1,9 +1,24 @@
 import unittest
 
-from sqlalchemy import (BigInteger, Boolean, Column, Date, DateTime, Float,
-                        Integer, Interval, LargeBinary, Numeric, SmallInteger,
-                        String, Text, Time, Unicode, UnicodeText,
-                        create_engine)
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    Float,
+    Integer,
+    Interval,
+    LargeBinary,
+    Numeric,
+    SmallInteger,
+    String,
+    Text,
+    Time,
+    Unicode,
+    UnicodeText,
+    create_engine,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -32,6 +47,7 @@ class User(Base):
     profile_visits = Column(BigInteger)
     rank = Column(Numeric(precision=8, asdecimal=False, decimal_return_scale=None))
     time_of_birth = Column(Time)
+
 
 Base.metadata.create_all(engine)
 
