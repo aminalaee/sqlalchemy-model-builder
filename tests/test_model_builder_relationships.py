@@ -26,6 +26,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
 
+
 Base.metadata.create_all(engine)
 
 LocalSession = sessionmaker(bind=engine)

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, List
+from typing import Any, Dict, List
 
 
 @dataclass
@@ -12,7 +12,7 @@ class ColumnValuePair:
 class ColumnValuePairList:
     pairs: List[ColumnValuePair]
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         output = dict()
         for pair in self.pairs:
             output[pair.column] = pair.value

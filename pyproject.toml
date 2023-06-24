@@ -1,37 +1,83 @@
-[tool.poetry]
-name = "sqlalchemy-model-builder"
-version = "0.0.6"
-description = "SQLAlchemy Model Builder"
-authors = ["Amin Alaee <mohammadamin.alaee@gmail.com>"]
-license = "MIT"
-readme = "README.md"
-homepage = "https://github.com/aminalaee/sqlalchemy-model-builder"
-
-[tool.poetry.dependencies]
-python = "^3.7"
-SQLAlchemy = "^1.4.0"
-
-[tool.poetry.dev-dependencies]
-pytest = "^5.2"
-coverage = "^5.5"
-mypy = "^0.812"
-pylint = "^2.8.3"
-isort = "^5.8.0"
-sqlalchemy-stubs = "^0.4"
-
-[tool.pylint.message_control]
-disable = """
-    invalid-name,
-    missing-class-docstring,
-    missing-function-docstring,
-    missing-module-docstring,
-    no-self-use,
-    too-few-public-methods,
-"""
-
-[tool.pylint.format]
-max-line-length = 120
-
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sqlalchemy-model-builder"
+description = "SQLAlchemy Model Builder"
+readme = "README.md"
+requires-python = ">=3.7"
+license = "MIT"
+keywords = ["sqlalchemy", "testing"]
+authors = [
+  { name = "Amin Alaee", email = "me@aminalaee.dev" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Environment :: Web Environment",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  "sqlalchemy >=1.4",
+]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://github.com/aminalaee/sqlalchemy-model-builder"
+Issues = "https://github.com/aminalaee/sqlalchemy-model-builder/issues"
+Source = "https://github.com/aminalaee/sqlalchemy-model-builder"
+
+[tool.hatch.version]
+path = "sqlalchemy_model_builder/__init__.py"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "black==23.1.0",
+  "build==0.9.0",
+  "coverage==7.2.2",
+  "isort==5.11.5",
+  "mypy==1.1.1",
+  "pytest==7.2.2",
+  "ruff==0.0.256",
+]
+
+[tool.hatch.envs.default.scripts]
+cov = [
+  "coverage report --show-missing --skip-covered --fail-under=100",
+  "coverage xml",
+]
+check = [
+  "ruff .",
+  "isort --check --project=sqlalchemy_model_builder .",
+  "black --check .",
+  "mypy sqlalchemy_model_builder",
+]
+format = [
+  "isort --project=sqlalchemy_model_builder .",
+  "black .",
+  "ruff --fix .",
+]
+test = "coverage run -m pytest {args}"
+
+[tool.mypy]
+disallow_untyped_defs = true
+ignore_missing_imports = true
+show_error_codes = true
+no_implicit_optional = true
+
+[tool.isort]
+profile = "black"
+combine_as_imports = true
+
+[tool.coverage.run]
+source_pkgs = [
+  "sqlalchemy_model_builder",
+  "tests",
+]
