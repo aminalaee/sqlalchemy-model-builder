@@ -133,7 +133,11 @@ class ModelBuilder:
             if column.foreign_keys:
                 continue
 
-            random_value = self.__map_field_to_random_builder_method(python_type)()
+            if column.type.__class__.__name__ == "Enum":
+                random_value = RandomBuilder.next_from_list(column.type.enums)
+            else:
+                random_value = self.__map_field_to_random_builder_method(python_type)()
+
             column_value = ColumnValuePair(column.key, random_value)
             column_values.append(column_value)
 
