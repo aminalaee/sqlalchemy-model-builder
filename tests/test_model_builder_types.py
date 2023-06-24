@@ -1,3 +1,4 @@
+import enum
 import unittest
 
 from sqlalchemy import (
@@ -6,6 +7,7 @@ from sqlalchemy import (
     Column,
     Date,
     DateTime,
+    Enum,
     Float,
     Integer,
     Interval,
@@ -30,6 +32,11 @@ Base = declarative_base()
 engine = create_engine("sqlite://")
 
 
+class StatusEnum(enum.Enum):
+    active = "active"
+    inactive = "inactive"
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -47,6 +54,7 @@ class User(Base):
     points = Column(SmallInteger)
     profile_visits = Column(BigInteger)
     rank = Column(Numeric(precision=8, asdecimal=False, decimal_return_scale=None))
+    status = Column(Enum(StatusEnum), default=StatusEnum.active)
     time_of_birth = Column(Time)
     uuid = Column(Uuid)
 
