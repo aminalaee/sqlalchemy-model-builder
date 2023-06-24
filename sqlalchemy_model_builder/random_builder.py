@@ -49,16 +49,16 @@ class RandomBuilder:
         return round(random.uniform(minimum, maximum), precision)
 
     @classmethod
+    def next_from_list(cls, seq: List[Any]) -> Any:
+        return random.choice(seq)
+
+    @classmethod
     def next_int(cls, minimum: int = 0, maximum: int = 2147483647) -> int:
         return random.randint(minimum, maximum)
 
     @classmethod
     def next_int64(cls, minimum: int = 0, maximum: int = 9223372036854775807) -> int:
         return random.randint(minimum, maximum)
-
-    @classmethod
-    def next_from_list(cls, seq: List[Any]) -> Any:
-        return random.choice(seq)
 
     @classmethod
     def next_str(cls, length: int = 16) -> str:
