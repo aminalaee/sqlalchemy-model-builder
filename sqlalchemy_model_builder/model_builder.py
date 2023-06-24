@@ -1,5 +1,5 @@
 from datetime import date, datetime, time, timedelta
-from typing import Any, Callable, Optional, Type
+from typing import Any, Optional, Type
 from uuid import UUID
 
 from sqlalchemy import inspect
@@ -139,9 +139,7 @@ class ModelBuilder:
 
         return ColumnValuePairList(column_values)
 
-    def __map_field_to_random_builder_method(
-        self, field_type: type
-    ) -> Callable[[], Any]:
+    def __map_field_to_random_builder_method(self, field_type: type) -> Any:
         """Mapping between field type and RandomBuilder methods
 
         :returns: a RandomBuilder method for the provided type
