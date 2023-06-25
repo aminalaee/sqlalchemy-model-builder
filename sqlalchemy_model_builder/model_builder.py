@@ -1,5 +1,5 @@
 from datetime import date, datetime, time, timedelta
-from typing import Any, Optional, Type, TypeVar, Generic
+from typing import Any, Generic, Optional, Type, TypeVar
 from uuid import UUID
 
 from sqlalchemy import inspect
