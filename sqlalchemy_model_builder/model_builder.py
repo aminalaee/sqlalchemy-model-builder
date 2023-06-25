@@ -1,5 +1,5 @@
 from datetime import date, datetime, time, timedelta
-from typing import Any, Optional, Type
+from typing import Any, Generic, Optional, Type, TypeVar
 from uuid import UUID
 
 from sqlalchemy import inspect
@@ -9,6 +9,8 @@ from sqlalchemy.orm import Mapper, Session
 from sqlalchemy_model_builder._models import ColumnValuePair, ColumnValuePairList
 from sqlalchemy_model_builder.exceptions import ModelBuilderException
 from sqlalchemy_model_builder.random_builder import RandomBuilder
+
+T = TypeVar("T")
 
 _TYPE_MAPPING = {
     bool: RandomBuilder.next_bool,
@@ -24,13 +26,13 @@ _TYPE_MAPPING = {
 }
 
 
-class ModelBuilder:
-    def __init__(self, db_model: Type, minimal: bool = False):
+class ModelBuilder(Generic[T]):
+    def __init__(self, db_model: Type[T], minimal: bool = False):
         self.db: Optional[Session] = None
-        self.db_model: Type = db_model
-        self.minimal: bool = minimal
+        self.db_model = db_model
+        self.minimal = minimal
 
-    def build(self, **attrs: Any) -> Any:
+    def build(self, **attrs: Any) -> T:
         """Build SQLAlchemy model with random data and
         return it without persisting into database.
 
@@ -55,7 +57,7 @@ class ModelBuilder:
 
         return instance
 
-    def save(self, db: Session, **attrs: Any) -> Any:
+    def save(self, db: Session, **attrs: Any) -> T:
         """Build SQLAlchemy model with random data and
         persist it into database using provided db.
 
@@ -152,7 +154,7 @@ class ModelBuilder:
 
         return _TYPE_MAPPING.get(field_type, RandomBuilder.next_str)
 
-    def __save(self, instance: Any) -> None:
+    def __save(self, instance: T) -> None:
         assert self.db is not None
 
         self.db.add(instance)

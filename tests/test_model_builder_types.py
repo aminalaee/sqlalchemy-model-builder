@@ -72,7 +72,8 @@ class TestModelBuilderTypes(unittest.TestCase):
             ModelBuilder(Base).build()
 
     def test_build_model_types(self):
-        ModelBuilder(User).build()
+        user = ModelBuilder(User).build()
+        self.assertIsInstance(user, User)
 
     def test_build_model_minimal(self):
         user = ModelBuilder(User, minimal=True).build()
