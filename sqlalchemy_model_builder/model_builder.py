@@ -1,6 +1,4 @@
-from datetime import date, datetime, time, timedelta
-from typing import Any, Generic, Optional, Type, TypeVar
-from uuid import UUID
+from typing import Any, Callable, Dict, Generic, Optional, Type, TypeVar
 
 from sqlalchemy import inspect
 from sqlalchemy.exc import NoInspectionAvailable
@@ -12,7 +10,7 @@ from sqlalchemy_model_builder.random_builder import RandomBuilder
 
 T = TypeVar("T")
 
-_TYPE_MAPPING = {
+_TYPE_MAPPING: Dict[str, Callable[[], Any]] = {
     "BigInteger": RandomBuilder.next_int,
     "Boolean": RandomBuilder.next_bool,
     "Date": RandomBuilder.next_date,
@@ -22,6 +20,7 @@ _TYPE_MAPPING = {
     "Interval": RandomBuilder.next_timedelta,
     "LargeBinary": RandomBuilder.next_bytes,
     "Numeric": RandomBuilder.next_float,
+    "SmallInteger": RandomBuilder.next_int,
     "String": RandomBuilder.next_str,
     "Text": RandomBuilder.next_str,
     "Time": RandomBuilder.next_time,
