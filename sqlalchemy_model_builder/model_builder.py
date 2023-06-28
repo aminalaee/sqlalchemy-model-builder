@@ -1,6 +1,4 @@
-from datetime import date, datetime, time, timedelta
-from typing import Any, Generic, Optional, Type, TypeVar
-from uuid import UUID
+from typing import Any, Callable, Dict, Generic, Optional, Type, TypeVar
 
 from sqlalchemy import inspect
 from sqlalchemy.exc import NoInspectionAvailable
@@ -12,17 +10,23 @@ from sqlalchemy_model_builder.random_builder import RandomBuilder
 
 T = TypeVar("T")
 
-_TYPE_MAPPING = {
-    bool: RandomBuilder.next_bool,
-    bytes: RandomBuilder.next_bytes,
-    date: RandomBuilder.next_date,
-    datetime: RandomBuilder.next_datetime,
-    float: RandomBuilder.next_float,
-    int: RandomBuilder.next_int,
-    str: RandomBuilder.next_str,
-    time: RandomBuilder.next_time,
-    timedelta: RandomBuilder.next_timedelta,
-    UUID: RandomBuilder.next_uuid,
+_TYPE_MAPPING: Dict[str, Callable[[], Any]] = {
+    "BigInteger": RandomBuilder.next_int,
+    "Boolean": RandomBuilder.next_bool,
+    "Date": RandomBuilder.next_date,
+    "DateTime": RandomBuilder.next_datetime,
+    "Float": RandomBuilder.next_float,
+    "Integer": RandomBuilder.next_int,
+    "Interval": RandomBuilder.next_timedelta,
+    "LargeBinary": RandomBuilder.next_bytes,
+    "Numeric": RandomBuilder.next_float,
+    "SmallInteger": RandomBuilder.next_int,
+    "String": RandomBuilder.next_str,
+    "Text": RandomBuilder.next_str,
+    "Time": RandomBuilder.next_time,
+    "Unicode": RandomBuilder.next_str,
+    "UnicodeText": RandomBuilder.next_str,
+    "Uuid": RandomBuilder.next_uuid,
 }
 
 
@@ -120,14 +124,7 @@ class ModelBuilder(Generic[T]):
             column_values.append(column_value)
 
         for column in mapper.columns:  # type: ignore
-            python_type: Optional[type] = None
-
-            if hasattr(column.type, "impl"):
-                if hasattr(column.type.impl, "python_type"):
-                    python_type = column.type.python_type
-            elif hasattr(column.type, "python_type"):
-                python_type = column.type.python_type
-            assert python_type, f"Could not infer python_type for {column}"
+            type_ = column.type.__class__.__name__
 
             if self.minimal and column.nullable:
                 continue
@@ -135,24 +132,16 @@ class ModelBuilder(Generic[T]):
             if column.foreign_keys:
                 continue
 
-            if column.type.__class__.__name__ == "Enum":
+            if type_ == "Enum":
                 random_value = RandomBuilder.next_from_list(column.type.enums)
             else:
-                random_value = self.__map_field_to_random_builder_method(python_type)()
+                builder = _TYPE_MAPPING.get(type_, RandomBuilder.next_str)
+                random_value = builder()
 
             column_value = ColumnValuePair(column.key, random_value)
             column_values.append(column_value)
 
         return ColumnValuePairList(column_values)
-
-    def __map_field_to_random_builder_method(self, field_type: type) -> Any:
-        """Mapping between field type and RandomBuilder methods
-
-        :returns: a RandomBuilder method for the provided type
-        :rtype: function
-        """
-
-        return _TYPE_MAPPING.get(field_type, RandomBuilder.next_str)
 
     def __save(self, instance: T) -> None:
         assert self.db is not None
