@@ -26,6 +26,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.types import TypeDecorator
 
 from sqlalchemy_model_builder import ModelBuilder, ModelBuilderException
 
@@ -39,12 +40,24 @@ class StatusEnum(enum.Enum):
     inactive = "inactive"
 
 
+class CustomType(TypeDecorator):
+    impl = Unicode
+    cache_ok = True
+
+    def process_bind_param(self, value, dialect):
+        return "PREFIX:" + value
+
+    def process_result_value(self, value, dialect):
+        return value[7:]
+
+
 class User(Base):
     __tablename__ = "users"
 
     active_until = Column(Interval)
     bio = Column(Text)
     bio_unicode = Column(UnicodeText)
+    custom = Column(CustomType)
     date_of_birth = Column(Date)
     deposit = Column(Float)
     id = Column(Integer, primary_key=True)
@@ -76,6 +89,7 @@ def test_build_model_types():
     assert isinstance(user.active_until, timedelta)
     assert isinstance(user.bio, str)
     assert isinstance(user.bio_unicode, str)
+    assert isinstance(user.custom, str)
     assert isinstance(user.date_of_birth, date)
     assert isinstance(user.deposit, float)
     assert isinstance(user.id, int)
