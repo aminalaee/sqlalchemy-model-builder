@@ -13,7 +13,7 @@
 ## Installation
 
 ```shell
-$ pip install sqladmin
+$ pip install sqlalchemy-model-builder
 ```
 
 ---
@@ -22,8 +22,8 @@ $ pip install sqladmin
 Deinfe the SQLAlchemy models:
 
 ```python
+from sqlalchemy import Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.sql.sqltypes import Integer, String, Text
 
 Base = declarative_base()
 
